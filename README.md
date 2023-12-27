@@ -10,7 +10,7 @@ The lighting circuitry depends on the Arduino Nano development board which uses 
 
 ![Arduino](./pictures/arduino-nano.jpg)
 
-It's main job is to produce a PWM signal to the two voltage output channels to control the brightness of the lights, and furthermore, it has protections against overvoltage and high PWM duty cycles to the circuits.
+Its main job is to produce a PWM signal to the two voltage output channels to control the brightness of the lights, and furthermore, it has protections against overvoltage and high PWM duty cycles to the circuits.
 
 ## Lighting Circuits
 
