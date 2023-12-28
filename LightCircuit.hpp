@@ -10,6 +10,7 @@ public:
     void setupAdjustments(int adjustSensePin, float minVoltage, float maxVoltage);
     void setupProtection(float maxVoltage, int maxDutyCycle);
     void setupPWM(int pwmPin);
+    void setupPID(float porportional, float integral, float derivative, float maxAccumulation = 20.0f);
 
     void updatePWM();
     void updateAdj();
@@ -18,6 +19,18 @@ public:
     void printStatus(const char* name);
 
 private:
+    struct PID
+    {
+        float p, i, d;
+        float error, errorAccumulation, errorRate, maxAccumulation;
+        float value;
+
+        PID();
+
+        void newError(float error);
+        float control(float min, float max);
+    } controller_m;
+
     float voltage_m;
     float brightness_m;
 
