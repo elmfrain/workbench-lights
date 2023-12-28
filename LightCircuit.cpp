@@ -6,6 +6,37 @@
 #include <avr/iom328p.h>
 #endif
 
+LightCircuit::PID::PID() :
+    error(0.0f),
+    errorAccumulation(0.0f),
+    errorRate(0.0f),
+    value(0.0f)
+{
+}
+
+void LightCircuit::PID::newError(float error)
+{
+    errorAccumulation += error;
+    errorAccumulation = -maxAccumulation > errorAccumulation ? -maxAccumulation :
+                         maxAccumulation < errorAccumulation ? maxAccumulation :
+                         errorAccumulation;
+    errorRate = error - this->error;
+    this->error = error;
+}
+
+float LightCircuit::PID::control(float min, float max)
+{
+    value = min;
+    value += p * error;
+    value += i * errorAccumulation;
+    value += d * errorRate;
+
+    if(value < min) value = min;
+    else if(max < value) value = max;
+
+    return value;
+}
+
 LightCircuit::LightCircuit() :
     voltage_m(0.0f),
     brightness_m(0.0f),
@@ -42,12 +73,22 @@ void LightCircuit::setupProtection(float maxVoltage, int maxDutyCycle)
     protectionMaxDutyCycle_m = maxDutyCycle;
 }
 
-void LightCircuit::setupPWM(int pwmPin)
+void LightCircuit::setupPWM(int pwmPin, float voltageTolerance)
 {
     pwmPin_m = pwmPin;
     pinMode(pwmPin_m, OUTPUT);
 
+    voltageTolerance_m = voltageTolerance;
+
     TCCR2B = TCCR2B & B11111000 | B00000001; // set PWM frequency of 31372.55 Hz for pins D3 and D11
+}
+
+void LightCircuit::setupPID(float porportional, float integral, float derivative, float maxAccumulation)
+{
+    controller_m.p = porportional;
+    controller_m.i = integral;
+    controller_m.d = derivative;
+    controller_m.maxAccumulation = maxAccumulation;
 }
 
 void LightCircuit::updatePWM()
@@ -59,23 +100,24 @@ void LightCircuit::updatePWM()
     if(!enabled_m)
     {
         pwmDutyCycle_m = 0;
+        controller_m.error = 0;
+        controller_m.errorAccumulation = 0;
         goto setPWM;
     }
 
     if(protectionMaxVoltage_m < voltage_m && 0 < pwmDutyCycle_m)
     {
-        pwmDutyCycle_m--;
+        pwmDutyCycle_m -= 5;
+        controller_m.value -= 5;
         goto setPWM;
     }
 
-    if(voltage_m < targetVoltage_m && pwmDutyCycle_m < protectionMaxDutyCycle_m)
-    {
-        pwmDutyCycle_m++;
-    }
-    else if(voltage_m > targetVoltage_m && 0 < pwmDutyCycle_m)
-    {
-        pwmDutyCycle_m--;
-    }
+    float error = targetVoltage_m - voltage_m;
+    if(-voltageTolerance_m < error && error < voltageTolerance_m)
+        goto setPWM;
+
+    controller_m.newError(error);
+    pwmDutyCycle_m = controller_m.control(0, protectionMaxDutyCycle_m);
 
 setPWM:
     analogWrite(pwmPin_m, pwmDutyCycle_m);

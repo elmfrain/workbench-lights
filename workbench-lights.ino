@@ -19,12 +19,14 @@ void setup()
     mainLED.setupVoltageSense(A4, 0.05376);
     mainLED.setupAdjustments(A0, 27.0f, 33.0f);
     mainLED.setupProtection(34.0f, 180);
-    mainLED.setupPWM(3);
+    mainLED.setupPWM(3, 0.25f);
+    mainLED.setupPID(1.0f, 4.0f, 0.0f, 100.0f);
 
     auxLED.setupVoltageSense(A5, 4.8876e-3);
-    auxLED.setupAdjustments(A1, 2.6f, 3.55f);
-    auxLED.setupProtection(3.6f, 129);
-    auxLED.setupPWM(11);
+    auxLED.setupAdjustments(A1, 2.65f, 3.6f);
+    auxLED.setupProtection(3.65f, 20);
+    auxLED.setupPWM(11, 0.15f);
+    auxLED.setupPID(0.0f, 0.6f, 0.0f, 100.0);
 
     sysStatus.setupSensors(A6, 0.02935f, 4, 7);
 
@@ -42,8 +44,8 @@ void loop()
     }
     else
     {
-        mainLED.setEnabled(true);
-        auxLED.setEnabled(true);
+        mainLED.setEnabled(sysStatus.isSw1On());
+        auxLED.setEnabled(sysStatus.isSw2On());
     }
 
     mainLED.updateAdj();
@@ -52,9 +54,6 @@ void loop()
     unsigned long now = millis();
     if(26 < now - lastUpdateTime)
     {
-        mainLED.setEnabled(sysStatus.isSw1On());
-        auxLED.setEnabled(sysStatus.isSw2On());
-
         mainLED.updatePWM();
         auxLED.updatePWM();
 
