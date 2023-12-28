@@ -35,7 +35,7 @@ void loop()
 {
     float sysVoltage = sysStatus.getVoltage();
 
-    if(sysVoltage < 17 || 20 < sysVoltage)
+    if(sysVoltage < 11 || 13 < sysVoltage)
     {
         mainLED.setEnabled(false);
         auxLED.setEnabled(false);
