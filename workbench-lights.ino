@@ -44,8 +44,8 @@ void loop()
     }
     else
     {
-        mainLED.setEnabled(true);
-        auxLED.setEnabled(true);
+        mainLED.setEnabled(sysStatus.isSw1On());
+        auxLED.setEnabled(sysStatus.isSw2On());
     }
 
     mainLED.updateAdj();
@@ -54,9 +54,6 @@ void loop()
     unsigned long now = millis();
     if(26 < now - lastUpdateTime)
     {
-        mainLED.setEnabled(sysStatus.isSw1On());
-        auxLED.setEnabled(sysStatus.isSw2On());
-
         mainLED.updatePWM();
         auxLED.updatePWM();
 
