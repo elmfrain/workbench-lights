@@ -9,7 +9,7 @@ public:
     void setupVoltageSense(int voltageSensePin, float voltageInputFactor);
     void setupAdjustments(int adjustSensePin, float minVoltage, float maxVoltage);
     void setupProtection(float maxVoltage, int maxDutyCycle);
-    void setupPWM(int pwmPin);
+    void setupPWM(int pwmPin, float voltageTolerance);
     void setupPID(float porportional, float integral, float derivative, float maxAccumulation = 20.0f);
 
     void updatePWM();
@@ -37,6 +37,7 @@ private:
     float targetVoltage_m;
     float minVoltage_m;
     float maxVoltage_m;
+    float voltageTolerance_m;
 
     int pwmDutyCycle_m;
 

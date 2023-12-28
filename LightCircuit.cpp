@@ -73,10 +73,12 @@ void LightCircuit::setupProtection(float maxVoltage, int maxDutyCycle)
     protectionMaxDutyCycle_m = maxDutyCycle;
 }
 
-void LightCircuit::setupPWM(int pwmPin)
+void LightCircuit::setupPWM(int pwmPin, float voltageTolerance)
 {
     pwmPin_m = pwmPin;
     pinMode(pwmPin_m, OUTPUT);
+
+    voltageTolerance_m = voltageTolerance;
 
     TCCR2B = TCCR2B & B11111000 | B00000001; // set PWM frequency of 31372.55 Hz for pins D3 and D11
 }
@@ -110,7 +112,11 @@ void LightCircuit::updatePWM()
         goto setPWM;
     }
 
-    controller_m.newError(targetVoltage_m - voltage_m);
+    float error = targetVoltage_m - voltage_m;
+    if(-voltageTolerance_m < error && error < voltageTolerance_m)
+        goto setPWM;
+
+    controller_m.newError(error);
     pwmDutyCycle_m = controller_m.control(0, protectionMaxDutyCycle_m);
 
 setPWM:
