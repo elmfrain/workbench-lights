@@ -17,12 +17,12 @@ bool printingEnabled = true;
 void setup()
 {
     mainLED.setupVoltageSense(A4, 0.05376);
-    mainLED.setupAdjustments(A0, 20.0f, 33.0f);
-    mainLED.setupProtection(34.0f, 153);
+    mainLED.setupAdjustments(A0, 27.0f, 33.0f);
+    mainLED.setupProtection(34.0f, 180);
     mainLED.setupPWM(3);
 
     auxLED.setupVoltageSense(A5, 4.8876e-3);
-    auxLED.setupAdjustments(A1, 1.0f, 3.55f);
+    auxLED.setupAdjustments(A1, 2.6f, 3.55f);
     auxLED.setupProtection(3.6f, 129);
     auxLED.setupPWM(11);
 
