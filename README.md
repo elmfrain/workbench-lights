@@ -1,6 +1,8 @@
 # Workbench Lighting System
 
-This repository contains fireware code for my workbench lighting system. It is designed to convert 19v DC into two voltage channels, the Main LED which needs ~31v, and the Auxilarary LED which outputs around ~3.4v. The brightness (voltage) of each channel can be adjusted via thier respective potentiometers, and they also be disabled by flicking thier respective switches aswell.
+> **Note**: Code in this repository is tuned to work with a 19v power supply. If you wish to use 12v, use code from the `using12vPower` branch.
+
+This repository contains firmware code for my workbench lighting system. It is designed to convert 19v DC into two voltage channels, the Main LED which needs ~31v, and the Auxilarary LED which outputs around ~3.4v. The brightness (voltage) of each channel can be adjusted via thier respective potentiometers, and they also be disabled by flicking thier respective switches aswell.
 
 You can find more information about this project by visiting my blog post: [Posts > DIY Workbench & Lighting System](https://blog.elmfer.com/posts/project-workbench/)
 
